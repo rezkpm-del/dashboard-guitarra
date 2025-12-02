@@ -22,6 +22,8 @@ import type { Report } from "@/lib/reports-data"
 import type { ConnectedUser } from "@/app/page"
 import { cn } from "@/lib/utils"
 import { useState, useEffect, useRef } from "react"
+import Image from "next/image"
+import { ChatSync, type Message } from "@/lib/chat-sync"
 
 interface DashboardHomeProps {
   currentUser: string
@@ -30,14 +32,6 @@ interface DashboardHomeProps {
   onOpenMobileMenu: () => void
   connectedUsers: ConnectedUser[]
   onForceDisconnect: (username: string) => void
-}
-
-interface Message {
-  id: string
-  from: string
-  to: string
-  text: string
-  timestamp: Date
 }
 
 export default function DashboardHome({
@@ -53,6 +47,17 @@ export default function DashboardHome({
   const [messages, setMessages] = useState<Message[]>([])
   const [messageText, setMessageText] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const chatSync = ChatSync.getInstance()
+
+  useEffect(() => {
+    setMessages(chatSync.getMessages())
+
+    const unsubscribe = chatSync.subscribe(() => {
+      setMessages(chatSync.getMessages())
+    })
+
+    return unsubscribe
+  }, [])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -76,44 +81,33 @@ export default function DashboardHome({
       if (!recipient) return
 
       const newMessage: Message = {
-        id: Date.now().toString(),
+        id: `${Date.now()}-${Math.random()}`,
         from: currentUser,
         to: recipient,
         text: messageText.trim(),
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       }
-      setMessages([...messages, newMessage])
+      chatSync.addMessage(newMessage)
       setMessageText("")
-
-      if (recipient !== "admin") {
-        setTimeout(() => {
-          const responseMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            from: recipient,
-            to: currentUser,
-            text: `Hola ${currentUser}, recibí tu mensaje. Estoy revisando los reportes.`,
-            timestamp: new Date(),
-          }
-          setMessages((prev) => [...prev, responseMessage])
-        }, 2000)
-      }
     }
   }
 
   const onlineUsers = connectedUsers.filter((u) => u.status === "online" && u.username !== currentUser)
 
-  const formatTime = (date: Date | null) => {
+  const formatTime = (date: Date | string | null) => {
     if (!date) return "N/A"
-    return new Date(date).toLocaleTimeString("es-ES", {
+    const dateObj = typeof date === "string" ? new Date(date) : date
+    return dateObj.toLocaleTimeString("es-ES", {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
     })
   }
 
-  const formatDate = (date: Date | null) => {
+  const formatDate = (date: Date | string | null) => {
     if (!date) return "N/A"
-    return new Date(date).toLocaleDateString("es-ES", {
+    const dateObj = typeof date === "string" ? new Date(date) : date
+    return dateObj.toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -129,87 +123,195 @@ export default function DashboardHome({
 
   return (
     <div className="h-full overflow-y-auto relative bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950">
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-[10%] right-[15%] w-[600px] h-[600px] bg-gradient-to-br from-cyan-500/30 via-blue-500/25 to-transparent rounded-full blur-3xl animate-electric-pulse" />
-        <div className="absolute bottom-[5%] left-[10%] w-[500px] h-[500px] bg-gradient-to-tr from-indigo-500/30 via-violet-500/25 to-transparent rounded-full blur-3xl animate-electric-pulse-delayed" />
-        <div className="absolute top-[50%] left-[50%] w-[400px] h-[400px] bg-gradient-to-br from-blue-400/20 via-cyan-400/15 to-transparent rounded-full blur-3xl animate-electric-rotate" />
-        <div
-          className="absolute top-[70%] right-[25%] w-[450px] h-[450px] bg-gradient-to-br from-violet-500/25 via-purple-500/20 to-transparent rounded-full blur-3xl animate-electric-pulse"
-          style={{ animationDelay: "1.5s" }}
-        />
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* First wave of pizzas */}
+          <Image
+            src="/images/gemini-generated-image-x1jrzex1jrzex1jr-removebg-preview.png"
+            alt=""
+            width={120}
+            height={120}
+            className="absolute top-[10%] left-[5%] w-24 h-24 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "0s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-yysfmuyysfmuyysf-1-removebg-preview.png"
+            alt=""
+            width={100}
+            height={100}
+            className="absolute top-[20%] right-[8%] w-20 h-20 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "0.5s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-fhprw1fhprw1fhpr-removebg-preview.png"
+            alt=""
+            width={110}
+            height={110}
+            className="absolute top-[45%] left-[10%] w-24 h-24 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "1s" }}
+          />
 
-        <div className="absolute inset-0">
-          {Array.from({ length: 25 }).map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-2 h-2 bg-cyan-400 rounded-full shadow-lg shadow-cyan-400/60"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animation: `electric-spark ${3 + Math.random() * 3}s ease-in-out infinite`,
-                animationDelay: `${Math.random() * 2}s`,
-              }}
-            />
-          ))}
-        </div>
+          {/* Second wave of pizzas */}
+          <Image
+            src="/images/gemini-generated-image-x1jrzex1jrzex1jr-removebg-preview.png"
+            alt=""
+            width={90}
+            height={90}
+            className="absolute bottom-[15%] right-[12%] w-20 h-20 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "1.5s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-yysfmuyysfmuyysf-1-removebg-preview.png"
+            alt=""
+            width={130}
+            height={130}
+            className="absolute top-[60%] right-[20%] w-28 h-28 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "2s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-fhprw1fhprw1fhpr-removebg-preview.png"
+            alt=""
+            width={105}
+            height={105}
+            className="absolute bottom-[25%] left-[15%] w-24 h-24 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "2.5s" }}
+          />
 
-        <svg className="absolute inset-0 w-full h-full opacity-30">
-          <defs>
-            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{ stopColor: "#06b6d4", stopOpacity: 0.6 }} />
-              <stop offset="50%" style={{ stopColor: "#3b82f6", stopOpacity: 0.3 }} />
-              <stop offset="100%" style={{ stopColor: "#6366f1", stopOpacity: 0.6 }} />
-            </linearGradient>
-          </defs>
+          {/* Third wave of pizzas */}
+          <Image
+            src="/images/gemini-generated-image-x1jrzex1jrzex1jr-removebg-preview.png"
+            alt=""
+            width={115}
+            height={115}
+            className="absolute top-[75%] right-[5%] w-26 h-26 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "3s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-yysfmuyysfmuyysf-1-removebg-preview.png"
+            alt=""
+            width={95}
+            height={95}
+            className="absolute top-[35%] left-[25%] w-22 h-22 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "3.5s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-fhprw1fhprw1fhpr-removebg-preview.png"
+            alt=""
+            width={125}
+            height={125}
+            className="absolute bottom-[40%] right-[25%] w-28 h-28 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "4s" }}
+          />
 
-          {Array.from({ length: 20 }).map((_, i) => (
-            <line
-              key={i}
-              x1={`${Math.random() * 100}%`}
-              y1={`${Math.random() * 100}%`}
-              x2={`${Math.random() * 100}%`}
-              y2={`${Math.random() * 100}%`}
-              stroke="url(#gradient1)"
-              strokeWidth="2"
-              className="animate-neural-network"
-              style={{
-                animationDelay: `${Math.random() * 3}s`,
-              }}
-            />
-          ))}
-        </svg>
-
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#0ea5e910_1px,transparent_1px),linear-gradient(to_bottom,#0ea5e910_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-30" />
-
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent animate-tech-scan" />
-          <div
-            className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-blue-400/60 to-transparent animate-tech-scan"
+          {/* Fourth wave for more coverage */}
+          <Image
+            src="/images/gemini-generated-image-x1jrzex1jrzex1jr-removebg-preview.png"
+            alt=""
+            width={100}
+            height={100}
+            className="absolute top-[5%] right-[30%] w-22 h-22 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "4.5s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-yysfmuyysfmuyysf-1-removebg-preview.png"
+            alt=""
+            width={110}
+            height={110}
+            className="absolute bottom-[10%] left-[8%] w-24 h-24 object-contain animate-pizza-float-smooth opacity-0"
             style={{ animationDelay: "5s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-fhprw1fhprw1fhpr-removebg-preview.png"
+            alt=""
+            width={120}
+            height={120}
+            className="absolute top-[50%] right-[35%] w-26 h-26 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "5.5s" }}
           />
         </div>
 
-        <div className="absolute top-[30%] right-[25%] w-3 h-3 bg-blue-400 rounded-full shadow-2xl shadow-blue-400 animate-pulse" />
-        <div
-          className="absolute bottom-[40%] left-[20%] w-2.5 h-2.5 bg-indigo-400 rounded-full shadow-2xl shadow-indigo-400 animate-pulse"
-          style={{ animationDelay: "1s" }}
-        />
-        <div
-          className="absolute top-[60%] right-[40%] w-2 h-2 bg-cyan-400 rounded-full shadow-2xl shadow-cyan-400 animate-pulse"
-          style={{ animationDelay: "2s" }}
-        />
-        <div
-          className="absolute bottom-[20%] left-[45%] w-3 h-3 bg-violet-400 rounded-full shadow-2xl shadow-violet-400 animate-pulse"
-          style={{ animationDelay: "1.5s" }}
-        />
-        <div
-          className="absolute top-[80%] right-[60%] w-2.5 h-2.5 bg-blue-400 rounded-full shadow-2xl shadow-blue-400 animate-pulse"
-          style={{ animationDelay: "0.5s" }}
-        />
-        <div
-          className="absolute bottom-[10%] left-[70%] w-2 h-2 bg-cyan-400 rounded-full shadow-2xl shadow-cyan-400 animate-pulse"
-          style={{ animationDelay: "2.5s" }}
-        />
+        <div className="absolute inset-0">
+          <div className="absolute top-[10%] right-[15%] w-[600px] h-[600px] bg-gradient-to-br from-cyan-500/30 via-blue-500/25 to-transparent rounded-full blur-3xl animate-electric-pulse" />
+          <div className="absolute bottom-[5%] left-[10%] w-[500px] h-[500px] bg-gradient-to-tr from-indigo-500/30 via-violet-500/25 to-transparent rounded-full blur-3xl animate-electric-pulse-delayed" />
+          <div className="absolute top-[50%] left-[50%] w-[400px] h-[400px] bg-gradient-to-br from-blue-400/20 via-cyan-400/15 to-transparent rounded-full blur-3xl animate-electric-rotate" />
+          <div
+            className="absolute top-[70%] right-[25%] w-[450px] h-[450px] bg-gradient-to-br from-violet-500/25 via-purple-500/20 to-transparent rounded-full blur-3xl animate-electric-pulse"
+            style={{ animationDelay: "1.5s" }}
+          />
+
+          <div className="absolute inset-0">
+            {Array.from({ length: 25 }).map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-2 h-2 bg-cyan-400 rounded-full shadow-lg shadow-cyan-400/60"
+                style={{
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  animation: `electric-spark ${3 + Math.random() * 3}s ease-in-out infinite`,
+                  animationDelay: `${Math.random() * 2}s`,
+                }}
+              />
+            ))}
+          </div>
+
+          <svg className="absolute inset-0 w-full h-full opacity-30">
+            <defs>
+              <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style={{ stopColor: "#06b6d4", stopOpacity: 0.6 }} />
+                <stop offset="50%" style={{ stopColor: "#3b82f6", stopOpacity: 0.3 }} />
+                <stop offset="100%" style={{ stopColor: "#6366f1", stopOpacity: 0.6 }} />
+              </linearGradient>
+            </defs>
+
+            {Array.from({ length: 20 }).map((_, i) => (
+              <line
+                key={i}
+                x1={`${Math.random() * 100}%`}
+                y1={`${Math.random() * 100}%`}
+                x2={`${Math.random() * 100}%`}
+                y2={`${Math.random() * 100}%`}
+                stroke="url(#gradient1)"
+                strokeWidth="2"
+                className="animate-neural-network"
+                style={{
+                  animationDelay: `${Math.random() * 3}s`,
+                }}
+              />
+            ))}
+          </svg>
+
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#0ea5e910_1px,transparent_1px),linear-gradient(to_bottom,#0ea5e910_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-30" />
+
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent animate-tech-scan" />
+            <div
+              className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-blue-400/60 to-transparent animate-tech-scan"
+              style={{ animationDelay: "5s" }}
+            />
+          </div>
+
+          <div className="absolute top-[30%] right-[25%] w-3 h-3 bg-blue-400 rounded-full border-2 border-slate-900 shadow-lg shadow-blue-400/50 animate-pulse" />
+          <div
+            className="absolute bottom-[40%] left-[20%] w-2.5 h-2.5 bg-indigo-400 rounded-full border-2 border-slate-900 shadow-2xl shadow-indigo-400 animate-pulse"
+            style={{ animationDelay: "1s" }}
+          />
+          <div
+            className="absolute top-[60%] right-[40%] w-2 h-2 bg-cyan-400 rounded-full border-2 border-slate-900 shadow-2xl shadow-cyan-400 animate-pulse"
+            style={{ animationDelay: "2s" }}
+          />
+          <div
+            className="absolute bottom-[20%] left-[45%] w-3 h-3 bg-violet-400 rounded-full border-2 border-slate-900 shadow-2xl shadow-violet-400 animate-pulse"
+            style={{ animationDelay: "1.5s" }}
+          />
+          <div
+            className="absolute top-[80%] right-[60%] w-2.5 h-2.5 bg-blue-400 rounded-full border-2 border-slate-900 shadow-2xl shadow-blue-400 animate-pulse"
+            style={{ animationDelay: "0.5s" }}
+          />
+          <div
+            className="absolute bottom-[10%] left-[70%] w-2 h-2 bg-cyan-400 rounded-full border-2 border-slate-900 shadow-2xl shadow-cyan-400 animate-pulse"
+            style={{ animationDelay: "2.5s" }}
+          />
+        </div>
       </div>
 
       <div className="relative z-10">
@@ -590,7 +692,7 @@ export default function DashboardHome({
                                 {msg.from === currentUser ? "Tú" : msg.from}
                               </span>
                               <span className="text-xs opacity-70">
-                                {msg.timestamp.toLocaleTimeString("es-ES", {
+                                {new Date(msg.timestamp).toLocaleTimeString("es-ES", {
                                   hour: "2-digit",
                                   minute: "2-digit",
                                 })}

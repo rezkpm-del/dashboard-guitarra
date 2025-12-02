@@ -1,88 +1,70 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import LoginPage from "@/components/login-page"
 import DashboardLayout from "@/components/dashboard-layout"
-
-export interface ConnectedUser {
-  username: string
-  status: "online" | "offline"
-  connectedAt: Date | null
-  disconnectedAt: Date | null
-  lastSeen: string
-}
+import { ChatSync, type ConnectedUser } from "@/lib/chat-sync"
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<string | null>(null)
-  const [connectedUsers, setConnectedUsers] = useState<ConnectedUser[]>([
-    { username: "admin", status: "offline", connectedAt: null, disconnectedAt: null, lastSeen: "Offline" },
-    {
-      username: "operaciones",
-      status: "online",
-      connectedAt: new Date(Date.now() - 120000),
-      disconnectedAt: null,
-      lastSeen: "Hace 2 min",
-    },
-    {
-      username: "dirección",
-      status: "offline",
-      connectedAt: null,
-      disconnectedAt: new Date(Date.now() - 900000),
-      lastSeen: "Hace 15 min",
-    },
-    {
-      username: "euskal",
-      status: "online",
-      connectedAt: new Date(Date.now() - 60000),
-      disconnectedAt: null,
-      lastSeen: "Hace 1 min",
-    },
-    {
-      username: "nuñez",
-      status: "offline",
-      connectedAt: null,
-      disconnectedAt: new Date(Date.now() - 1800000),
-      lastSeen: "Hace 30 min",
-    },
-  ])
+  const [connectedUsers, setConnectedUsers] = useState<ConnectedUser[]>([])
+  const chatSync = ChatSync.getInstance()
+
+  useEffect(() => {
+    setConnectedUsers(chatSync.getUsers())
+
+    const unsubscribe = chatSync.subscribe(() => {
+      setConnectedUsers(chatSync.getUsers())
+    })
+
+    return unsubscribe
+  }, [])
+
+  useEffect(() => {
+    if (!currentUser) return
+
+    const interval = setInterval(() => {
+      const now = new Date().toISOString()
+      chatSync.updateUserStatus(currentUser, {
+        status: "online",
+        lastSeen: "Ahora",
+      })
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [currentUser])
 
   const handleLogin = (username: string) => {
     setCurrentUser(username)
-    setConnectedUsers((prev) =>
-      prev.map((user) =>
-        user.username === username
-          ? { ...user, status: "online", connectedAt: new Date(), disconnectedAt: null, lastSeen: "Ahora" }
-          : user,
-      ),
-    )
+    const now = new Date().toISOString()
+    chatSync.updateUserStatus(username, {
+      status: "online",
+      connectedAt: now,
+      disconnectedAt: null,
+      lastSeen: "Ahora",
+    })
   }
 
   const handleLogout = () => {
     if (currentUser) {
-      setConnectedUsers((prev) =>
-        prev.map((user) =>
-          user.username === currentUser
-            ? { ...user, status: "offline", disconnectedAt: new Date(), lastSeen: "Ahora mismo" }
-            : user,
-        ),
-      )
+      const now = new Date().toISOString()
+      chatSync.updateUserStatus(currentUser, {
+        status: "offline",
+        disconnectedAt: now,
+        lastSeen: "Ahora mismo",
+      })
     }
     setCurrentUser(null)
   }
 
   const handleForceDisconnect = (username: string) => {
     if (currentUser === "admin" && username !== "admin") {
-      setConnectedUsers((prev) =>
-        prev.map((user) =>
-          user.username === username
-            ? { ...user, status: "offline", disconnectedAt: new Date(), lastSeen: "Desconectado por admin" }
-            : user,
-        ),
-      )
-      // If the disconnected user is the current user, log them out
-      if (username === currentUser) {
-        setCurrentUser(null)
-      }
+      const now = new Date().toISOString()
+      chatSync.updateUserStatus(username, {
+        status: "offline",
+        disconnectedAt: now,
+        lastSeen: "Desconectado por admin",
+      })
     }
   }
 

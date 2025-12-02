@@ -1,14 +1,19 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Geist, Geist_Mono, Great_Vibes } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
+const greatVibes = Great_Vibes({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-script",
+})
 
 export const metadata: Metadata = {
-  title: "Enterprise Analytics Hub - Power BI Reports",
+  title: "La Guitarrita - Analytics Hub",
   description: "Plataforma de análisis empresarial con reportes de Power BI integrados",
   generator: "v0.app",
   icons: {
@@ -37,7 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className="font-sans antialiased">
+      <body className={`font-sans antialiased ${greatVibes.variable}`}>
         {children}
         <Analytics />
       </body>

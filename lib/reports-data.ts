@@ -62,7 +62,7 @@ const ALL_REPORTS: Report[] = [
     title: "Ventas Odoo",
     description: "Dashboard de ventas integrado con sistema Odoo",
     category: "Sistemas",
-    url: "https://app.powerbi.com/reportEmbed?reportId=84c6c4a0-327c-426d-9c25-9bd20a66aacb&autoAuth=true&ctid=a65ea78a-8780-42c7-a0ee-c2b0b1bad4b2",
+    url: "https://app.powerbi.com/view?r=eyJrIjoiOWU3ZDhjMzAtMDQxMi00OTRkLThhOWYtMDNkYzI4YTA2ZGY4IiwidCI6ImE2NWVhNzhhLTg3ODAtNDJjNy1hMGVlLWMyYjBiMWJhZDRiMiIsImMiOjR9",
     icon: PieChart,
     iconColor: "from-rose-500 via-pink-600 to-fuchsia-600",
     iconGradient: "bg-rose-500/10",

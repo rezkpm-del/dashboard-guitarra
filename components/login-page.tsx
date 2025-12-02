@@ -7,6 +7,7 @@ import { Lock, AlertCircle, User, KeyRound, Sparkles, Shield, Zap } from "lucide
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import Image from "next/image"
 
 interface LoginPageProps {
   onLogin: (username: string) => void
@@ -44,6 +45,111 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   return (
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* First wave of pizzas */}
+          <Image
+            src="/images/gemini-generated-image-x1jrzex1jrzex1jr-removebg-preview.png"
+            alt=""
+            width={120}
+            height={120}
+            className="absolute top-[10%] left-[5%] w-24 h-24 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "0s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-yysfmuyysfmuyysf-1-removebg-preview.png"
+            alt=""
+            width={100}
+            height={100}
+            className="absolute top-[20%] right-[8%] w-20 h-20 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "0.5s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-fhprw1fhprw1fhpr-removebg-preview.png"
+            alt=""
+            width={110}
+            height={110}
+            className="absolute top-[45%] left-[10%] w-24 h-24 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "1s" }}
+          />
+
+          {/* Second wave of pizzas */}
+          <Image
+            src="/images/gemini-generated-image-x1jrzex1jrzex1jr-removebg-preview.png"
+            alt=""
+            width={90}
+            height={90}
+            className="absolute bottom-[15%] right-[12%] w-20 h-20 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "1.5s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-yysfmuyysfmuyysf-1-removebg-preview.png"
+            alt=""
+            width={130}
+            height={130}
+            className="absolute top-[60%] right-[20%] w-28 h-28 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "2s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-fhprw1fhprw1fhpr-removebg-preview.png"
+            alt=""
+            width={105}
+            height={105}
+            className="absolute bottom-[25%] left-[15%] w-24 h-24 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "2.5s" }}
+          />
+
+          {/* Third wave of pizzas */}
+          <Image
+            src="/images/gemini-generated-image-x1jrzex1jrzex1jr-removebg-preview.png"
+            alt=""
+            width={115}
+            height={115}
+            className="absolute top-[75%] right-[5%] w-26 h-26 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "3s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-yysfmuyysfmuyysf-1-removebg-preview.png"
+            alt=""
+            width={95}
+            height={95}
+            className="absolute top-[35%] left-[25%] w-22 h-22 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "3.5s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-fhprw1fhprw1fhpr-removebg-preview.png"
+            alt=""
+            width={125}
+            height={125}
+            className="absolute bottom-[40%] right-[25%] w-28 h-28 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "4s" }}
+          />
+
+          {/* Fourth wave for more coverage */}
+          <Image
+            src="/images/gemini-generated-image-x1jrzex1jrzex1jr-removebg-preview.png"
+            alt=""
+            width={100}
+            height={100}
+            className="absolute top-[5%] right-[30%] w-22 h-22 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "4.5s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-yysfmuyysfmuyysf-1-removebg-preview.png"
+            alt=""
+            width={110}
+            height={110}
+            className="absolute bottom-[10%] left-[8%] w-24 h-24 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "5s" }}
+          />
+          <Image
+            src="/images/gemini-generated-image-fhprw1fhprw1fhpr-removebg-preview.png"
+            alt=""
+            width={120}
+            height={120}
+            className="absolute top-[50%] right-[35%] w-26 h-26 object-contain animate-pizza-float-smooth opacity-0"
+            style={{ animationDelay: "5.5s" }}
+          />
+        </div>
         {/* Animated electric gradient orbs */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-blue-500 via-cyan-400 to-blue-600 rounded-full blur-[120px] opacity-30 animate-electric-pulse" />
@@ -112,19 +218,22 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-indigo-500/20 to-transparent rounded-tr-[100px]" />
 
           <div className="text-center mb-8 relative">
-            <div className="relative inline-flex items-center justify-center mb-4">
+            <div className="relative inline-flex items-center justify-center mb-6">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl blur-xl opacity-50 animate-pulse-slow" />
               <div className="relative w-20 h-20 bg-gradient-to-br from-blue-500 via-indigo-600 to-violet-600 rounded-2xl shadow-2xl shadow-blue-500/50 flex items-center justify-center group hover:scale-110 transition-transform duration-300">
                 <Lock className="w-9 h-9 text-white group-hover:rotate-12 transition-transform duration-300" />
                 <Sparkles className="w-4 h-4 text-blue-200 absolute -top-1 -right-1 animate-pulse" />
               </div>
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-white via-blue-100 to-indigo-200 bg-clip-text text-transparent tracking-tight">
-              Enterprise Analytics Hub
+
+            <h1 className="text-5xl font-bold mb-4 text-white drop-shadow-2xl font-script tracking-wide">
+              La Guitarrita
             </h1>
+            <div className="h-px w-48 mx-auto bg-gradient-to-r from-transparent via-blue-400 to-transparent mb-4" />
+
             <p className="text-slate-300 text-sm flex items-center justify-center gap-2">
               <Shield className="w-4 h-4 text-blue-400" />
-              Plataforma Segura de Inteligencia de Negocios
+              {"Plataforma Segura de Inteligencia de Negocios"}
             </p>
 
             {/* Tech status indicators */}
@@ -211,7 +320,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
           <div className="mt-6 pt-6 border-t border-white/10">
             <p className="text-xs text-slate-400 text-center leading-relaxed">
-              Contacta al administrador si tienes problemas de acceso
+              {"Contacta al administrador si tienes problemas de acceso"}
             </p>
           </div>
         </div>

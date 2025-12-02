@@ -1,6 +1,6 @@
 "use client"
 
-import { Menu, Sparkles, TrendingUp } from "lucide-react"
+import { Menu, Sparkles, TrendingUp, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import type { Report } from "@/lib/reports-data"
@@ -64,45 +64,81 @@ export default function DashboardHome({ currentUser, reports, onSelectReport, on
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {reports.map((report, index) => (
             <Card
               key={report.id}
               onClick={() => onSelectReport(report)}
               className={cn(
-                "relative p-6 cursor-pointer transition-all duration-500 border-2 border-slate-200/80 hover:border-blue-300 group animate-fade-in-up overflow-hidden bg-gradient-to-br from-white to-slate-50/50",
-                "hover:shadow-xl hover:shadow-blue-500/10 hover:scale-[1.03] active:scale-[0.98]",
+                "relative p-6 cursor-pointer transition-all duration-500 border border-slate-200/50 group animate-fade-in-up overflow-hidden bg-white",
+                "hover:shadow-2xl hover:-translate-y-2 active:translate-y-0 active:scale-[0.98]",
+                "before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white before:to-slate-50 before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100",
                 `delay-${(index % 6) * 100 + 200}`,
               )}
+              style={{
+                transform: "perspective(1000px) rotateX(0deg)",
+                transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+              }}
+              onMouseEnter={(e) => {
+                const card = e.currentTarget
+                card.style.transform = "perspective(1000px) rotateX(2deg) translateY(-8px)"
+              }}
+              onMouseLeave={(e) => {
+                const card = e.currentTarget
+                card.style.transform = "perspective(1000px) rotateX(0deg) translateY(0px)"
+              }}
             >
-              {/* Gradient overlay on hover */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-purple-500/20 blur-xl -z-10" />
 
-              {/* Content */}
-              <div className="relative flex items-start gap-4">
-                <div className="relative flex-shrink-0">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl blur-md opacity-50 group-hover:opacity-70 transition-opacity duration-500" />
-                  <div className="relative p-3 bg-gradient-to-br from-blue-500 via-indigo-600 to-violet-600 rounded-xl shadow-lg group-hover:shadow-xl group-hover:shadow-blue-500/50 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
-                    <report.icon className="w-6 h-6 text-white" />
+              <div className="relative z-10 flex flex-col gap-4">
+                <div className="relative w-fit">
+                  <div
+                    className={cn(
+                      "absolute inset-0 rounded-2xl blur-2xl opacity-40 group-hover:opacity-70 transition-all duration-500",
+                      `bg-gradient-to-br ${report.iconColor}`,
+                    )}
+                  />
+                  <div
+                    className={cn(
+                      "relative p-4 rounded-2xl shadow-xl transition-all duration-500",
+                      "group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-2xl",
+                      `bg-gradient-to-br ${report.iconColor} ${report.iconBgHover}`,
+                    )}
+                    style={{
+                      boxShadow: "0 20px 40px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2)",
+                    }}
+                  >
+                    <report.icon className="w-8 h-8 text-white drop-shadow-lg" />
                   </div>
                 </div>
 
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-slate-900 mb-2 text-pretty line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
+                <div className="space-y-3">
+                  <h4 className="font-bold text-lg text-slate-900 text-pretty line-clamp-2 group-hover:text-blue-600 transition-colors duration-300 leading-tight">
                     {report.title}
                   </h4>
-                  <p className="text-xs text-slate-600 mb-3 line-clamp-2 text-pretty leading-relaxed">
+
+                  <p className="text-sm text-slate-600 line-clamp-2 text-pretty leading-relaxed">
                     {report.description}
                   </p>
 
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 group-hover:from-blue-100 group-hover:to-indigo-100 group-hover:text-blue-700 transition-all duration-300">
-                    {report.category}
-                  </span>
+                  <div className="flex items-center justify-between pt-2">
+                    <span
+                      className={cn(
+                        "inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold",
+                        "bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700",
+                        "group-hover:from-blue-50 group-hover:to-indigo-50 group-hover:text-blue-700",
+                        "transition-all duration-300 shadow-sm",
+                      )}
+                    >
+                      {report.category}
+                    </span>
+
+                    <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300" />
+                  </div>
                 </div>
               </div>
 
-              {/* Shine effect on hover */}
-              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none skew-x-12" />
             </Card>
           ))}
         </div>

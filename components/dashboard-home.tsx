@@ -1,6 +1,6 @@
 "use client"
 
-import { Menu, Sparkles, TrendingUp, ChevronRight } from "lucide-react"
+import { Menu, Sparkles, TrendingUp, ChevronRight, Activity, BarChart3, Database, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import type { Report } from "@/lib/reports-data"
@@ -22,125 +22,283 @@ export default function DashboardHome({ currentUser, reports, onSelectReport, on
   }
 
   return (
-    <div className="h-full overflow-y-auto">
-      <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-slate-200 px-6 py-5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onOpenMobileMenu}
-              className="lg:hidden hover:bg-slate-100 transition-all duration-300 hover:scale-105 active:scale-95"
-            >
-              <Menu className="w-5 h-5" />
-            </Button>
-            <div className="animate-fade-in">
-              <div className="flex items-center gap-2 mb-1">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent capitalize">
-                  {getGreeting()}, {currentUser}
-                </h2>
-                <Sparkles className="w-5 h-5 text-blue-500 animate-pulse-slow" />
+    <div className="h-full overflow-y-auto relative bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950">
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-[10%] right-[15%] w-[600px] h-[600px] bg-gradient-to-br from-cyan-500/30 via-blue-500/25 to-transparent rounded-full blur-3xl animate-electric-pulse" />
+        <div className="absolute bottom-[5%] left-[10%] w-[500px] h-[500px] bg-gradient-to-tr from-indigo-500/30 via-violet-500/25 to-transparent rounded-full blur-3xl animate-electric-pulse-delayed" />
+        <div className="absolute top-[50%] left-[50%] w-[400px] h-[400px] bg-gradient-to-br from-blue-400/20 via-cyan-400/15 to-transparent rounded-full blur-3xl animate-electric-rotate" />
+        <div
+          className="absolute top-[70%] right-[25%] w-[450px] h-[450px] bg-gradient-to-br from-violet-500/25 via-purple-500/20 to-transparent rounded-full blur-3xl animate-electric-pulse"
+          style={{ animationDelay: "1.5s" }}
+        />
+
+        <div className="absolute inset-0">
+          {Array.from({ length: 25 }).map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-cyan-400 rounded-full shadow-lg shadow-cyan-400/60"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                animation: `electric-spark ${3 + Math.random() * 3}s ease-in-out infinite`,
+                animationDelay: `${Math.random() * 2}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        <svg className="absolute inset-0 w-full h-full opacity-30">
+          <defs>
+            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style={{ stopColor: "#06b6d4", stopOpacity: 0.6 }} />
+              <stop offset="50%" style={{ stopColor: "#3b82f6", stopOpacity: 0.3 }} />
+              <stop offset="100%" style={{ stopColor: "#6366f1", stopOpacity: 0.6 }} />
+            </linearGradient>
+          </defs>
+
+          {Array.from({ length: 20 }).map((_, i) => (
+            <line
+              key={i}
+              x1={`${Math.random() * 100}%`}
+              y1={`${Math.random() * 100}%`}
+              x2={`${Math.random() * 100}%`}
+              y2={`${Math.random() * 100}%`}
+              stroke="url(#gradient1)"
+              strokeWidth="2"
+              className="animate-neural-network"
+              style={{
+                animationDelay: `${Math.random() * 3}s`,
+              }}
+            />
+          ))}
+        </svg>
+
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#0ea5e910_1px,transparent_1px),linear-gradient(to_bottom,#0ea5e910_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-30" />
+
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent animate-tech-scan" />
+          <div
+            className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-blue-400/60 to-transparent animate-tech-scan"
+            style={{ animationDelay: "5s" }}
+          />
+        </div>
+
+        <div className="absolute top-[30%] right-[25%] w-3 h-3 bg-blue-400 rounded-full shadow-2xl shadow-blue-400 animate-pulse" />
+        <div
+          className="absolute bottom-[40%] left-[20%] w-2.5 h-2.5 bg-indigo-400 rounded-full shadow-2xl shadow-indigo-400 animate-pulse"
+          style={{ animationDelay: "1s" }}
+        />
+        <div
+          className="absolute top-[60%] right-[40%] w-2 h-2 bg-cyan-400 rounded-full shadow-2xl shadow-cyan-400 animate-pulse"
+          style={{ animationDelay: "2s" }}
+        />
+        <div
+          className="absolute bottom-[20%] left-[45%] w-3 h-3 bg-violet-400 rounded-full shadow-2xl shadow-violet-400 animate-pulse"
+          style={{ animationDelay: "1.5s" }}
+        />
+        <div
+          className="absolute top-[80%] right-[60%] w-2.5 h-2.5 bg-blue-400 rounded-full shadow-2xl shadow-blue-400 animate-pulse"
+          style={{ animationDelay: "0.5s" }}
+        />
+        <div
+          className="absolute bottom-[10%] left-[70%] w-2 h-2 bg-cyan-400 rounded-full shadow-2xl shadow-cyan-400 animate-pulse"
+          style={{ animationDelay: "2.5s" }}
+        />
+      </div>
+
+      <div className="relative z-10">
+        <header className="sticky top-0 z-20 bg-slate-900/70 backdrop-blur-xl border-b border-cyan-500/20 shadow-lg shadow-cyan-500/10">
+          <div className="px-6 py-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onOpenMobileMenu}
+                  className="lg:hidden hover:bg-white/10 transition-all duration-300 hover:scale-105 active:scale-95 rounded-xl text-white"
+                >
+                  <Menu className="w-5 h-5" />
+                </Button>
+                <div className="animate-fade-in">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent capitalize">
+                      {getGreeting()}, {currentUser}
+                    </h2>
+                    <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse-slow" />
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-300">
+                    <TrendingUp className="w-4 h-4 text-cyan-400" />
+                    Acceso a {reports.length} {reports.length === 1 ? "reporte" : "reportes"} de analítica empresarial
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-sm text-slate-600">
-                <TrendingUp className="w-4 h-4 text-blue-500" />
-                Tienes acceso a {reports.length} {reports.length === 1 ? "reporte" : "reportes"}
+
+              <div className="hidden md:flex items-center gap-6 text-xs">
+                <div className="flex items-center gap-2 px-3 py-2 bg-emerald-500/10 border border-emerald-400/30 rounded-lg backdrop-blur-sm">
+                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50" />
+                  <span className="text-emerald-300 font-medium">Sistema Operativo</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 bg-cyan-500/10 border border-cyan-400/30 rounded-lg backdrop-blur-sm">
+                  <Activity className="w-3.5 h-3.5 text-cyan-400" />
+                  <span className="text-cyan-300 font-medium">Datos en Tiempo Real</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Main content */}
-      <div className="p-6">
-        <div className="mb-6 animate-fade-in delay-100">
-          <h3 className="text-lg font-semibold text-slate-900 mb-2 flex items-center gap-2">
-            Tus Reportes Disponibles
-            <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
-              {reports.length}
-            </span>
-          </h3>
-          <p className="text-sm text-slate-600 text-balance">
-            Selecciona un reporte para visualizar la información detallada
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {reports.map((report, index) => (
-            <Card
-              key={report.id}
-              onClick={() => onSelectReport(report)}
-              className={cn(
-                "relative p-6 cursor-pointer transition-all duration-500 border border-slate-200/50 group animate-fade-in-up overflow-hidden bg-white",
-                "hover:shadow-2xl hover:-translate-y-2 active:translate-y-0 active:scale-[0.98]",
-                "before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white before:to-slate-50 before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100",
-                `delay-${(index % 6) * 100 + 200}`,
-              )}
-              style={{
-                transform: "perspective(1000px) rotateX(0deg)",
-                transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-              }}
-              onMouseEnter={(e) => {
-                const card = e.currentTarget
-                card.style.transform = "perspective(1000px) rotateX(2deg) translateY(-8px)"
-              }}
-              onMouseLeave={(e) => {
-                const card = e.currentTarget
-                card.style.transform = "perspective(1000px) rotateX(0deg) translateY(0px)"
-              }}
-            >
-              <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-purple-500/20 blur-xl -z-10" />
-
-              <div className="relative z-10 flex flex-col gap-4">
-                <div className="relative w-fit">
-                  <div
-                    className={cn(
-                      "absolute inset-0 rounded-2xl blur-2xl opacity-40 group-hover:opacity-70 transition-all duration-500",
-                      `bg-gradient-to-br ${report.iconColor}`,
-                    )}
-                  />
-                  <div
-                    className={cn(
-                      "relative p-4 rounded-2xl shadow-xl transition-all duration-500",
-                      "group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-2xl",
-                      `bg-gradient-to-br ${report.iconColor} ${report.iconBgHover}`,
-                    )}
-                    style={{
-                      boxShadow: "0 20px 40px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2)",
-                    }}
-                  >
-                    <report.icon className="w-8 h-8 text-white drop-shadow-lg" />
-                  </div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 animate-fade-in">
+            <Card className="p-5 border-cyan-500/30 bg-slate-900/40 backdrop-blur-xl hover:shadow-2xl hover:shadow-cyan-500/20 transition-all duration-300 hover:border-cyan-400/50">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm text-slate-300 font-medium mb-1">Reportes Disponibles</p>
+                  <p className="text-3xl font-bold text-white">{reports.length}</p>
                 </div>
-
-                <div className="space-y-3">
-                  <h4 className="font-bold text-lg text-slate-900 text-pretty line-clamp-2 group-hover:text-blue-600 transition-colors duration-300 leading-tight">
-                    {report.title}
-                  </h4>
-
-                  <p className="text-sm text-slate-600 line-clamp-2 text-pretty leading-relaxed">
-                    {report.description}
-                  </p>
-
-                  <div className="flex items-center justify-between pt-2">
-                    <span
-                      className={cn(
-                        "inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold",
-                        "bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700",
-                        "group-hover:from-blue-50 group-hover:to-indigo-50 group-hover:text-blue-700",
-                        "transition-all duration-300 shadow-sm",
-                      )}
-                    >
-                      {report.category}
-                    </span>
-
-                    <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300" />
-                  </div>
+                <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-xl border border-cyan-400/30">
+                  <BarChart3 className="w-6 h-6 text-cyan-400" />
                 </div>
               </div>
-
-              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none skew-x-12" />
             </Card>
-          ))}
+
+            <Card className="p-5 border-blue-500/30 bg-slate-900/40 backdrop-blur-xl hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 hover:border-blue-400/50">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm text-slate-300 font-medium mb-1">Categorías Activas</p>
+                  <p className="text-3xl font-bold text-white">{new Set(reports.map((r) => r.category)).size}</p>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-xl border border-blue-400/30">
+                  <Database className="w-6 h-6 text-blue-400" />
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-5 border-emerald-500/30 bg-slate-900/40 backdrop-blur-xl hover:shadow-2xl hover:shadow-emerald-500/20 transition-all duration-300 hover:border-emerald-400/50">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm text-slate-300 font-medium mb-1">Estado de Conexión</p>
+                  <p className="text-lg font-bold text-emerald-400 flex items-center gap-2 mt-1">
+                    <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50" />
+                    Conectado
+                  </p>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-xl border border-emerald-400/30">
+                  <Zap className="w-6 h-6 text-emerald-400" />
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          <div className="mb-6 animate-fade-in delay-100">
+            <h3 className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+              Panel de Reportes
+              <span className="px-2.5 py-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs rounded-full font-medium shadow-lg shadow-cyan-500/30">
+                {reports.length}
+              </span>
+            </h3>
+            <p className="text-sm text-slate-300 text-balance">
+              Accede a análisis detallados y métricas empresariales en tiempo real
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {reports.map((report, index) => (
+              <Card
+                key={report.id}
+                onClick={() => onSelectReport(report)}
+                className={cn(
+                  "relative p-6 cursor-pointer transition-all duration-500 border border-cyan-500/30 group animate-fade-in-up overflow-hidden",
+                  "bg-slate-900/50 backdrop-blur-xl",
+                  "hover:shadow-2xl hover:shadow-cyan-500/30 hover:-translate-y-3 hover:border-cyan-400/60 active:translate-y-0 active:scale-[0.98]",
+                  "before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-cyan-500/10 before:via-blue-500/10 before:to-transparent before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100",
+                  `delay-${(index % 6) * 100 + 200}`,
+                )}
+                style={{
+                  transform: "perspective(1200px) rotateX(0deg) rotateY(0deg)",
+                  transition: "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
+                onMouseMove={(e) => {
+                  const card = e.currentTarget
+                  const rect = card.getBoundingClientRect()
+                  const x = e.clientX - rect.left
+                  const y = e.clientY - rect.top
+                  const centerX = rect.width / 2
+                  const centerY = rect.height / 2
+                  const rotateX = (y - centerY) / 20
+                  const rotateY = (centerX - x) / 20
+                  card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-12px)`
+                }}
+                onMouseLeave={(e) => {
+                  const card = e.currentTarget
+                  card.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg) translateY(0px)"
+                }}
+              >
+                <div
+                  className={cn(
+                    "absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl -z-10",
+                    `bg-gradient-to-br ${report.iconColor}`,
+                  )}
+                />
+
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-cyan-500/20 to-transparent rounded-bl-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                <div className="relative z-10 flex flex-col gap-4">
+                  <div className="relative w-fit">
+                    <div
+                      className={cn(
+                        "absolute inset-0 rounded-2xl blur-2xl opacity-50 group-hover:opacity-80 transition-all duration-500",
+                        `bg-gradient-to-br ${report.iconColor}`,
+                      )}
+                    />
+                    <div
+                      className={cn(
+                        "relative p-4 rounded-2xl shadow-xl transition-all duration-500",
+                        "group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-2xl",
+                        `bg-gradient-to-br ${report.iconColor} ${report.iconBgHover}`,
+                      )}
+                      style={{
+                        boxShadow:
+                          "0 20px 40px rgba(0,0,0,0.15), inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.1)",
+                      }}
+                    >
+                      <report.icon className="w-8 h-8 text-white drop-shadow-lg" />
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-slate-900 shadow-lg shadow-emerald-400/50 animate-pulse" />
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-lg text-white text-pretty line-clamp-2 group-hover:text-cyan-400 transition-colors duration-300 leading-tight">
+                      {report.title}
+                    </h4>
+
+                    <p className="text-sm text-slate-300 line-clamp-2 text-pretty leading-relaxed">
+                      {report.description}
+                    </p>
+
+                    <div className="flex items-center justify-between pt-2">
+                      <span
+                        className={cn(
+                          "inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold",
+                          "bg-gradient-to-r from-slate-800/80 to-slate-700/80 text-slate-200 border border-slate-600/50 backdrop-blur-sm",
+                          "group-hover:from-cyan-500/20 group-hover:to-blue-500/20 group-hover:text-cyan-300 group-hover:border-cyan-400/50",
+                          "transition-all duration-300 shadow-sm",
+                        )}
+                      >
+                        {report.category}
+                      </span>
+
+                      <div className="flex items-center gap-1.5 text-cyan-400 font-medium text-sm group-hover:gap-2.5 transition-all duration-300">
+                        <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">Ver</span>
+                        <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-all duration-300" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none skew-x-12" />
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </div>

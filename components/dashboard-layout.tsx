@@ -5,13 +5,21 @@ import Sidebar from "@/components/sidebar"
 import DashboardHome from "@/components/dashboard-home"
 import ReportViewer from "@/components/report-viewer"
 import { type Report, getReportsForUser } from "@/lib/reports-data"
+import type { ConnectedUser } from "@/app/page"
 
 interface DashboardLayoutProps {
   currentUser: string
   onLogout: () => void
+  connectedUsers: ConnectedUser[]
+  onForceDisconnect: (username: string) => void
 }
 
-export default function DashboardLayout({ currentUser, onLogout }: DashboardLayoutProps) {
+export default function DashboardLayout({
+  currentUser,
+  onLogout,
+  connectedUsers,
+  onForceDisconnect,
+}: DashboardLayoutProps) {
   const [selectedReport, setSelectedReport] = useState<Report | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -38,6 +46,8 @@ export default function DashboardLayout({ currentUser, onLogout }: DashboardLayo
             reports={userReports}
             onSelectReport={setSelectedReport}
             onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
+            connectedUsers={connectedUsers}
+            onForceDisconnect={onForceDisconnect}
           />
         )}
       </main>

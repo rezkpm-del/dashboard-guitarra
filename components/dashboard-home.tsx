@@ -1,19 +1,125 @@
 "use client"
 
-import { Menu, Sparkles, TrendingUp, ChevronRight, Activity, BarChart3, Database, Zap } from "lucide-react"
+import {
+  Menu,
+  Sparkles,
+  TrendingUp,
+  ChevronRight,
+  Activity,
+  BarChart3,
+  Database,
+  Zap,
+  Users,
+  MessageSquare,
+  X,
+  Send,
+  Clock,
+  LogOut,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import type { Report } from "@/lib/reports-data"
+import type { ConnectedUser } from "@/app/page"
 import { cn } from "@/lib/utils"
+import { useState, useEffect, useRef } from "react"
 
 interface DashboardHomeProps {
   currentUser: string
   reports: Report[]
   onSelectReport: (report: Report) => void
   onOpenMobileMenu: () => void
+  connectedUsers: ConnectedUser[]
+  onForceDisconnect: (username: string) => void
 }
 
-export default function DashboardHome({ currentUser, reports, onSelectReport, onOpenMobileMenu }: DashboardHomeProps) {
+interface Message {
+  id: string
+  from: string
+  to: string
+  text: string
+  timestamp: Date
+}
+
+export default function DashboardHome({
+  currentUser,
+  reports,
+  onSelectReport,
+  onOpenMobileMenu,
+  connectedUsers,
+  onForceDisconnect,
+}: DashboardHomeProps) {
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  const [selectedChatUser, setSelectedChatUser] = useState<string | null>(null)
+  const [messages, setMessages] = useState<Message[]>([])
+  const [messageText, setMessageText] = useState("")
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
+
+  const conversationMessages = messages.filter((msg) => {
+    if (currentUser === "admin") {
+      return (
+        (msg.from === currentUser && msg.to === selectedChatUser) ||
+        (msg.from === selectedChatUser && msg.to === currentUser)
+      )
+    } else {
+      // Non-admin users can only chat with admin
+      return (msg.from === currentUser && msg.to === "admin") || (msg.from === "admin" && msg.to === currentUser)
+    }
+  })
+
+  const sendMessage = () => {
+    if (messageText.trim() && (selectedChatUser || currentUser !== "admin")) {
+      const recipient = currentUser === "admin" ? selectedChatUser : "admin"
+      if (!recipient) return
+
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        from: currentUser,
+        to: recipient,
+        text: messageText.trim(),
+        timestamp: new Date(),
+      }
+      setMessages([...messages, newMessage])
+      setMessageText("")
+
+      if (recipient !== "admin") {
+        setTimeout(() => {
+          const responseMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            from: recipient,
+            to: currentUser,
+            text: `Hola ${currentUser}, recibí tu mensaje. Estoy revisando los reportes.`,
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, responseMessage])
+        }, 2000)
+      }
+    }
+  }
+
+  const onlineUsers = connectedUsers.filter((u) => u.status === "online" && u.username !== currentUser)
+
+  const formatTime = (date: Date | null) => {
+    if (!date) return "N/A"
+    return new Date(date).toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
+  }
+
+  const formatDate = (date: Date | null) => {
+    if (!date) return "N/A"
+    return new Date(date).toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
+  }
+
   const getGreeting = () => {
     const hour = new Date().getHours()
     if (hour < 12) return "Buenos días"
@@ -173,20 +279,45 @@ export default function DashboardHome({ currentUser, reports, onSelectReport, on
               </div>
             </Card>
 
-            <Card className="p-5 border-emerald-500/30 bg-slate-900/40 backdrop-blur-xl hover:shadow-2xl hover:shadow-emerald-500/20 transition-all duration-300 hover:border-emerald-400/50">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm text-slate-300 font-medium mb-1">Estado de Conexión</p>
-                  <p className="text-lg font-bold text-emerald-400 flex items-center gap-2 mt-1">
-                    <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50" />
-                    Conectado
-                  </p>
+            {currentUser === "admin" ? (
+              <Card
+                className="p-5 border-violet-500/30 bg-slate-900/40 backdrop-blur-xl hover:shadow-2xl hover:shadow-violet-500/20 transition-all duration-300 hover:border-violet-400/50 cursor-pointer"
+                onClick={() => setIsChatOpen(true)}
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm text-slate-300 font-medium mb-1">Usuarios Conectados</p>
+                    <p className="text-3xl font-bold text-white">{onlineUsers.length}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <MessageSquare className="w-3.5 h-3.5 text-violet-400" />
+                      <span className="text-xs text-violet-300">Click para mensajería</span>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-gradient-to-br from-violet-500/20 to-purple-500/20 rounded-xl border border-violet-400/30">
+                    <Users className="w-6 h-6 text-violet-400" />
+                  </div>
                 </div>
-                <div className="p-3 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-xl border border-emerald-400/30">
-                  <Zap className="w-6 h-6 text-emerald-400" />
+              </Card>
+            ) : (
+              <Card
+                className="p-5 border-violet-500/30 bg-slate-900/40 backdrop-blur-xl hover:shadow-2xl hover:shadow-violet-500/20 transition-all duration-300 hover:border-violet-400/50 cursor-pointer"
+                onClick={() => setIsChatOpen(true)}
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm text-slate-300 font-medium mb-1">Contactar Admin</p>
+                    <p className="text-lg font-bold text-violet-400 flex items-center gap-2 mt-1">
+                      <MessageSquare className="w-5 h-5" />
+                      Mensajería
+                    </p>
+                    <p className="text-xs text-slate-400 mt-2">Click para enviar mensaje</p>
+                  </div>
+                  <div className="p-3 bg-gradient-to-br from-violet-500/20 to-purple-500/20 rounded-xl border border-violet-400/30">
+                    <Zap className="w-6 h-6 text-violet-400" />
+                  </div>
                 </div>
-              </div>
-            </Card>
+              </Card>
+            )}
           </div>
 
           <div className="mb-6 animate-fade-in delay-100">
@@ -301,6 +432,213 @@ export default function DashboardHome({ currentUser, reports, onSelectReport, on
           </div>
         </div>
       </div>
+
+      {isChatOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-5xl h-[700px] bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-cyan-500/30 shadow-2xl shadow-cyan-500/20 flex overflow-hidden animate-slide-up">
+            {currentUser === "admin" && (
+              <div className="w-80 border-r border-cyan-500/20 bg-slate-900/60 flex flex-col">
+                <div className="p-4 border-b border-cyan-500/20 bg-gradient-to-r from-violet-500/10 to-purple-500/10">
+                  <h3 className="font-bold text-white flex items-center gap-2">
+                    <Users className="w-5 h-5 text-violet-400" />
+                    Usuarios del Sistema
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-1">{onlineUsers.length} en línea</p>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-3 space-y-2">
+                  {connectedUsers
+                    .filter((user) => user.username !== "admin")
+                    .map((user) => (
+                      <div
+                        key={user.username}
+                        onClick={() => setSelectedChatUser(user.username)}
+                        className={cn(
+                          "p-3 rounded-lg cursor-pointer transition-all duration-300 border",
+                          selectedChatUser === user.username
+                            ? "bg-violet-500/20 border-violet-400/50"
+                            : "bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/80 hover:border-violet-400/30",
+                        )}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <div
+                              className={cn(
+                                "w-2.5 h-2.5 rounded-full shadow-lg",
+                                user.status === "online"
+                                  ? "bg-emerald-400 shadow-emerald-400/50 animate-pulse"
+                                  : "bg-slate-500 shadow-slate-500/50",
+                              )}
+                            />
+                            <span className="font-medium text-white capitalize text-sm">{user.username}</span>
+                          </div>
+                          <span
+                            className={cn(
+                              "text-xs px-2 py-0.5 rounded-full font-medium",
+                              user.status === "online"
+                                ? "bg-emerald-500/20 text-emerald-300"
+                                : "bg-slate-600/50 text-slate-400",
+                            )}
+                          >
+                            {user.status === "online" ? "Online" : "Offline"}
+                          </span>
+                        </div>
+
+                        <div className="space-y-1.5 text-xs">
+                          {user.connectedAt && (
+                            <div className="flex items-center gap-1.5 text-slate-400">
+                              <Clock className="w-3 h-3 text-cyan-400" />
+                              <span>
+                                Conectado: {formatDate(user.connectedAt)} {formatTime(user.connectedAt)}
+                              </span>
+                            </div>
+                          )}
+                          {user.disconnectedAt && user.status === "offline" && (
+                            <div className="flex items-center gap-1.5 text-slate-400">
+                              <Clock className="w-3 h-3 text-orange-400" />
+                              <span>
+                                Desconectado: {formatDate(user.disconnectedAt)} {formatTime(user.disconnectedAt)}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {user.status === "online" && (
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              onForceDisconnect(user.username)
+                            }}
+                            className="w-full mt-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 hover:border-red-400/50 transition-all duration-300"
+                          >
+                            <LogOut className="w-3 h-3 mr-1.5" />
+                            Desconectar Usuario
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            <div className="flex-1 flex flex-col">
+              <div className="p-4 border-b border-cyan-500/20 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-white flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-cyan-400" />
+                    {currentUser === "admin" ? (
+                      selectedChatUser ? (
+                        <>Conversación con {selectedChatUser}</>
+                      ) : (
+                        <>Selecciona un usuario</>
+                      )
+                    ) : (
+                      <>Chat con Admin</>
+                    )}
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    {currentUser === "admin"
+                      ? "Gestiona las conversaciones con tu equipo"
+                      : "Envía mensajes al administrador del sistema"}
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setIsChatOpen(false)
+                    setSelectedChatUser(null)
+                  }}
+                  className="text-slate-400 hover:text-white hover:bg-white/10 transition-all duration-300"
+                >
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+
+              {currentUser !== "admin" || selectedChatUser ? (
+                <>
+                  <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-950/50">
+                    {conversationMessages.length === 0 ? (
+                      <div className="h-full flex items-center justify-center">
+                        <div className="text-center">
+                          <MessageSquare className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                          <p className="text-slate-400 text-sm">
+                            {currentUser === "admin"
+                              ? "No hay mensajes aún. Inicia la conversación."
+                              : "Envía un mensaje al admin para comenzar"}
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      conversationMessages.map((msg) => (
+                        <div
+                          key={msg.id}
+                          className={cn("flex", msg.from === currentUser ? "justify-end" : "justify-start")}
+                        >
+                          <div
+                            className={cn(
+                              "max-w-[70%] rounded-2xl px-4 py-3 shadow-lg backdrop-blur-sm",
+                              msg.from === currentUser
+                                ? "bg-gradient-to-br from-cyan-500/90 to-blue-600/90 text-white rounded-br-sm"
+                                : "bg-slate-800/90 text-slate-100 border border-slate-700/50 rounded-bl-sm",
+                            )}
+                          >
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-semibold capitalize opacity-90">
+                                {msg.from === currentUser ? "Tú" : msg.from}
+                              </span>
+                              <span className="text-xs opacity-70">
+                                {msg.timestamp.toLocaleTimeString("es-ES", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}
+                              </span>
+                            </div>
+                            <p className="text-sm leading-relaxed">{msg.text}</p>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
+
+                  <div className="p-4 border-t border-cyan-500/20 bg-slate-900/60">
+                    <div className="flex gap-3">
+                      <input
+                        type="text"
+                        value={messageText}
+                        onChange={(e) => setMessageText(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                        placeholder="Escribe tu mensaje..."
+                        className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
+                      />
+                      <Button
+                        onClick={sendMessage}
+                        disabled={!messageText.trim()}
+                        className="px-6 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-xl shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Send className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="flex-1 flex items-center justify-center bg-slate-950/50">
+                  <div className="text-center">
+                    <Users className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                    <p className="text-slate-400 text-lg font-medium">Selecciona un usuario</p>
+                    <p className="text-slate-500 text-sm mt-2">
+                      Elige un usuario de la lista para iniciar una conversación
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
